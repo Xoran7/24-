@@ -2,8 +2,10 @@ package org.example.app00;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-@SpringBootApplication
+// 排除掉启动时不依赖数据源
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class App00Application {
 
     public static void main(String[] args) {
