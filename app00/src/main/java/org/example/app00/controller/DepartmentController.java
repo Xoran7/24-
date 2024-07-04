@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("department")
 public class DepartmentController {
     @Autowired
-    private DepartmentService departmentService;
+    private DepartmentService departmentService; // 编译看左，运行看右？
 
     /*
     查询组织列表
