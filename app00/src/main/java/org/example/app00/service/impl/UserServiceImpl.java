@@ -4,16 +4,26 @@ import org.example.app00.dto.UserDTO;
 import org.example.app00.entity.User;
 import org.example.app00.mapper.UserMapper;
 import org.example.app00.service.UserService;
+import org.example.app00.until.JWTUtil;
 import org.example.app00.until.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private final UserMapper userMapper;
+    @Autowired
+    private final RedisTemplate redisTemplate;
 
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, @Qualifier("redisTemplate") RedisTemplate redisTemplate) {
         this.userMapper = userMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -40,5 +50,24 @@ public class UserServiceImpl implements UserService {
         int result = userMapper.insertUser(userDTO);
 
         return result == 1;
+    }
+
+    @Override
+    public String login(UserDTO userDTO) {
+        // 判断账号是否输入正确
+        User user = userMapper.findUserByPhone(userDTO.getPhone());
+        if (user == null) {
+            throw new RuntimeException("账号或密码错误");
+        }
+        // 比对密码， 将用户输入的密码进行加密，比对加密后的
+        String password = StringUtil.md5Password(userDTO.getPassword(), user.getSalt(), 10);
+        if (!password.equals(user.getPassword())) {
+            throw new RuntimeException("账号或密码错误");
+        }
+        // 设置登录Token
+        String token = JWTUtil.sign(userDTO.getPhone(), user.getPassword());
+        redisTemplate.opsForValue().set("TOKEN_USER" + token, user, 12, TimeUnit.HOURS);
+
+        return token;
     }
 }

@@ -44,6 +44,12 @@ public class UserController {
         return ResponseEntity.status(200).header("SMS_SEND", key).body(Result.success("发送成功"));
     }
 
+    /**
+     * 注册
+     * @param userDTO
+     * @param key
+     * @return
+     */
     @PostMapping("reg")
     public ResponseEntity<Result> userReg(@RequestBody UserDTO userDTO, @RequestHeader("SMS_SEND")String key) { // @RequestBody才能接收到json数据
         // 判断验证码是否正确
@@ -59,5 +65,22 @@ public class UserController {
         boolean success = userService.userReg(userDTO);
 
         return success ? ResponseEntity.status(200).body(Result.fail("注册成功")) : ResponseEntity.status(200).body(Result.fail("注册失败"));
+    }
+
+    /**
+     * 登录
+     * @param userDTO
+     * @return
+     */
+    @PostMapping("login")
+    public ResponseEntity<Result> login(@RequestBody UserDTO userDTO) {
+//        String code = (String) redisTemplate.opsForValue().get(userDTO.getCode());
+        try {
+            String token = userService.login(userDTO);
+            return ResponseEntity.status(200).header("token", token).body(Result.success("登录成功"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(200).body(Result.fail("账号或密码错误"));
+        }
+
     }
 }
