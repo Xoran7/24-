@@ -1,13 +1,13 @@
 package org.example.app00.controller;
 
+import org.example.app00.dto.UserDTO;
+import org.example.app00.service.UserService;
 import org.example.app00.until.StringUtil;
 import org.example.app00.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +22,8 @@ public class UserController {
     }
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private UserService userService;
 
     /**
      * 发送验证码
@@ -40,5 +42,22 @@ public class UserController {
         redisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES);
 
         return ResponseEntity.status(200).header("SMS_SEND", key).body(Result.success("发送成功"));
+    }
+
+    @PostMapping("reg")
+    public ResponseEntity<Result> userReg(@RequestBody UserDTO userDTO, @RequestHeader("SMS_SEND")String key) { // @RequestBody才能接收到json数据
+        // 判断验证码是否正确
+        // 验证码从redis中取
+        String code = (String) redisTemplate.opsForValue().get(key);
+        if (code == null) {
+            return ResponseEntity.status(200).body(Result.fail("验证码过期"));
+        }
+        if (!code.equals(userDTO.getCode())) {
+            return ResponseEntity.status(200).body(Result.fail("验证码错误"));
+        }
+
+        boolean success = userService.userReg(userDTO);
+
+        return success ? ResponseEntity.status(200).body(Result.fail("注册成功")) : ResponseEntity.status(200).body(Result.fail("注册失败"));
     }
 }
