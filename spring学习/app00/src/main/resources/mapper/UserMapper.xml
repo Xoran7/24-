@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.example.app00.mapper.UserMapper" >
+    <select id="findUserByPhone" resultType="org.example.app00.entity.User">
+        select uid, user_name, did, phone, password, salt, state from user_info where phone = #{phone}
+    </select>
+    
+    <insert id="insertUser" parameterType="org.example.app00.dto.UserDTO">
+        insert into user_info (user_name, did, phone, password, salt, state) values (#{userName}, #{did}, #{phone}, #{password}, #{salt}, #{state})
+    </insert>
+
+</mapper>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.example.app00.mapper.DepartmentMapper" >
-    <select id="selectDepart" resultType="org.example.app00.entity.Department">
-        select did,department_name,department_desc from department_info
-    </select>
-
-
-</mapper>
