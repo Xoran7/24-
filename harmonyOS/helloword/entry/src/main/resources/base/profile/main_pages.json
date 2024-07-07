@@ -2,6 +2,8 @@
   "src": [
     "pages/Index",
     "pages/Second",
-    "pages/ControlLight"
+    "pages/ControlLight",
+    "pages/StartGenshin",
+    "pages/DeleteButton"
   ]
 }

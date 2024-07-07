@@ -1,3 +1,4 @@
+import {CustomButton} from "./CustomButton"
 @Entry
 @Component
 struct ControlLight {
@@ -14,13 +15,22 @@ struct ControlLight {
           .width(300)
       }
       Row({space:50}){
-        Button('Close')
-          .onClick(()=>{
-            this.isOpen=false
-          })
-        Button('Open')
+        // Button('Close')
+        //   .onClick(()=>{
+        //       this.isOpen=false
+        //   })
+        // Button('Open')
+        //   .onClick(()=>{
+        //     this.isOpen=true
+        //   })
+
+        CustomButton({text:"Open"})
           .onClick(()=>{
             this.isOpen=true
+          })
+        CustomButton({text:"Close", color:Color.Red})
+          .onClick(()=>{
+              this.isOpen=false
           })
       }
     }
@@ -29,3 +39,14 @@ struct ControlLight {
     .justifyContent(FlexAlign.Center)
   }
 }
+
+// 自定义按钮主键
+// @Component
+// struct CustomButton {
+//   text:String="Close"
+//   color:Color=Color.Blue
+//   build() {
+//     Button(this.text.toString())
+//       .backgroundColor(this.color)
+//   }
+// }
